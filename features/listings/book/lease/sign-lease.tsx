@@ -35,6 +35,8 @@ export function SignLease() {
         </label>
         <div className="mt-1">
           <input
+            disabled={transition}
+            aria-disabled={transition}
             type="text"
             name="signature"
             id="signature"
@@ -45,6 +47,7 @@ export function SignLease() {
       </div>
       <div className="py-2">
         <button
+          disabled={transition}
           aria-disabled={transition}
           formAction={formAction}
           className="relative w-full flex items-center justify-center rounded-md border border-transparent bg-gray-900 px-8 py-2 text-sm font-medium text-white hover:bg-gray-800"

@@ -2,6 +2,7 @@
 
 import { useParams } from "next/navigation";
 import { ChangeEvent } from "react";
+import { useFormStatus } from "react-dom";
 
 import { Dates } from "../dates/dates";
 
@@ -11,30 +12,6 @@ import { SignLease } from "./lease/sign-lease";
 import { submitBooking } from "@/actions/submit-booking";
 import { useQueryParams } from "@/hooks/use-booking-history";
 
-const products = [
-  {
-    id: 1,
-    title: "Basic Tee",
-    href: "#",
-    price: "$32.00",
-    color: "Black",
-    size: "Large",
-    imageSrc:
-      "https://tailwindui.com/img/ecommerce-images/checkout-page-02-product-01.jpg",
-    imageAlt: "Front of men's Basic Tee in black.",
-  },
-  // More products...
-];
-
-const deliveryMethods = [
-  {
-    id: 1,
-    title: "Standard",
-    turnaround: "4–10 business days",
-    price: "$5.00",
-  },
-  { id: 2, title: "Express", turnaround: "2–5 business days", price: "$16.00" },
-];
 const paymentMethods = [
   { id: "credit-card", title: "Credit card" },
   { id: "paypal", title: "PayPal" },
@@ -470,17 +447,31 @@ export function Book() {
               </dl>
 
               <div className="border-t border-gray-200 py-6 sm:px-6">
-                <button
-                  type="submit"
-                  className="w-full rounded-md border border-transparent bg-gray-900 px-4 py-3 text-base font-medium text-white shadow-sm hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-800 focus:ring-offset-2 focus:ring-offset-gray-50"
-                >
-                  Complete order
-                </button>
+                <SubmitButton />
               </div>
             </div>
           </div>
         </form>
       </div>
     </div>
+  );
+}
+
+function SubmitButton() {
+  const status = useFormStatus();
+
+  //@ts-expect-error is okay
+  const isSubmit = status.action?.name === "bound proxy";
+  // Remix makes this kind of stuff a lot easier!
+
+  return (
+    <button
+      disabled={status.pending && isSubmit}
+      aria-disabled={status.pending && isSubmit}
+      type="submit"
+      className="w-full rounded-md border border-transparent bg-gray-900 px-4 py-3 text-base font-medium text-white shadow-sm hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-800 focus:ring-offset-2 focus:ring-offset-gray-50"
+    >
+      {status.pending && isSubmit ? "Submitting..." : "Complete order"}
+    </button>
   );
 }
