@@ -1590,9 +1590,15 @@ export async function getListings() {
   }) as Promise<typeof data>;
 }
 
-export async function getListing(id: number) {
+export async function getListing(
+  id: number,
+  start: string | undefined,
+  end: string | undefined
+) {
   return new Promise((resolve) => {
     const delay = Math.random() * (2000 - 500) + 500; // Random delay between 500ms and 2000ms
-    setTimeout(() => resolve(data.find((listing) => listing.id === id)), delay);
+    const listing = data.find((listing) => listing.id === id);
+    console.log("listing", listing);
+    setTimeout(() => resolve(listing), delay);
   }) as Promise<Listing | undefined>;
 }

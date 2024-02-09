@@ -13,7 +13,7 @@ type QueryObject<T> = {
   [key in keyof T]: T[key];
 };
 
-export function useQueryParams<T extends QueryParamsOptions<T>>(options: T) {
+export function useQueryParams<T extends QueryParamsOptions<T>>(options?: T) {
   const searchParams = useSearchParams();
 
   // get query params

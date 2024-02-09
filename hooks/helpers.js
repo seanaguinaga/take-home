@@ -31,7 +31,8 @@ export function createQueryString(queryObject = {}) {
   let queryString = Object.keys(queryObject)
     .filter(
       (key) =>
-        queryObject[key] &&
+        queryObject[key] !== null &&
+        queryObject[key] !== undefined &&
         !(Array.isArray(queryObject[key]) && !queryObject[key].length)
     )
     .map((key) => {

@@ -8,6 +8,7 @@ const config: Config = {
     "./features/**/*.{js,ts,jsx,tsx,mdx}",
     "./ui/**/*.{js,ts,jsx,tsx,mdx}",
     "./node_modules/tailwind-datepicker-react/dist/**/*.js",
+    "./node_modules/react-tailwindcss-datepicker/dist/index.esm.js",
   ],
   theme: {},
   plugins: [

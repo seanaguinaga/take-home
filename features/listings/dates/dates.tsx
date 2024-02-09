@@ -3,6 +3,8 @@
 import { useState } from "react";
 import Datepicker from "tailwind-datepicker-react";
 
+import { Listing } from "../data";
+
 import { useQueryParams } from "@/hooks/use-booking-history";
 
 const startOptions = {
@@ -41,17 +43,27 @@ const endOptions = {
   minDate: new Date(new Date().setDate(new Date().getDate() + 1)),
 } as const;
 
-export const Dates = () => {
+interface DatesProps {
+  listing: Listing;
+}
+
+export const Dates = ({ listing }: DatesProps) => {
   const [showStart, setShowStart] = useState(false);
   const [showEnd, setShowEnd] = useState(false);
   const { queryParams, setQueryParams } = useQueryParams({
-    start: endOptions.minDate,
-    end: endOptions.minDate,
+    start: undefined,
+    end: undefined,
   });
 
   const [dateRange, setDateRange] = useState({
-    start: new Date(queryParams.start || startOptions.minDate),
-    end: new Date(queryParams.end || endOptions.minDate),
+    start: new Date(
+      queryParams.start || listing.availableDate || startOptions.minDate
+    ),
+    end: new Date(
+      queryParams.end ||
+        new Date().setDate(new Date(listing.availableDate).getDate() + 1) ||
+        endOptions.minDate
+    ),
   });
 
   const handleStartChange = (selectedDate: Date) => {

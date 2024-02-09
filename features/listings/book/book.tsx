@@ -1,16 +1,14 @@
-"use client";
+import { Suspense } from "react";
 
-import { useParams } from "next/navigation";
-import { ChangeEvent } from "react";
-import { useFormStatus } from "react-dom";
-
+import { Listing } from "../data";
 import { Dates } from "../dates/dates";
 
 import { ListingSummary } from "./booking-summary";
+import { Input, Select, SubmitButton } from "./inputs";
+import { getLease } from "./lease/data";
 import { SignLease } from "./lease/sign-lease";
 
 import { submitBooking } from "@/actions/submit-booking";
-import { useQueryParams } from "@/hooks/use-booking-history";
 
 const paymentMethods = [
   { id: "credit-card", title: "Credit card" },
@@ -18,44 +16,17 @@ const paymentMethods = [
   { id: "etransfer", title: "eTransfer" },
 ];
 
-function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(" ");
+interface BookProps {
+  listing: Listing;
 }
 
-export function Book() {
-  const params = useParams<{ id: string }>();
-
-  const { queryParams, setQueryParams } = useQueryParams({
-    email: "",
-    firstName: "",
-    lastName: "",
-    company: "",
-    lineOne: "",
-    lineTwo: "",
-    city: "",
-    country: "",
-    state: "",
-    postalCode: "",
-    phone: "",
-    deliveryMethod: "",
-    paymentMethod: "",
-  });
-
-  // Function to handle input changes
-  const handleInputChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    setQueryParams({ ...queryParams, ...{ [name]: value } });
-  };
-
-  const submitBookingWithId = submitBooking.bind(null, params.id);
+export async function Book({ listing }: BookProps) {
+  const submitBookingWithId = submitBooking.bind(null, `${listing.id}`);
 
   return (
     <div className="mx-auto max-w-7xl px-4 pb-12 sm:px-6 lg:px-8">
       <div className="rounded-lg bg-white px-5 py-6 shadow sm:px-6">
         <h1 className="sr-only">Checkout</h1>
-
         <form
           action={submitBookingWithId}
           className="lg:grid lg:grid-cols-2 lg:gap-x-12 xl:gap-x-16"
@@ -67,23 +38,11 @@ export function Book() {
               </h2>
 
               <div className="mt-4">
-                <label
-                  htmlFor="email-address"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Email address
-                </label>
-                <div className="mt-1">
-                  <input
-                    value={queryParams.email}
-                    onChange={handleInputChange}
-                    type="email"
-                    id="email"
-                    name="email"
-                    autoComplete="email"
-                    className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                  />
-                </div>
+                <Input
+                  name="email"
+                  label="Email address"
+                  autoComplete="email"
+                />
               </div>
             </div>
 
@@ -93,205 +52,65 @@ export function Book() {
               </h2>
 
               <div className="mt-4 grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-4">
-                <div>
-                  <label
-                    htmlFor="firstName"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    First name
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      value={queryParams.firstName}
-                      onChange={handleInputChange}
-                      type="text"
-                      id="firstName"
-                      name="firstName"
-                      autoComplete="given-name"
-                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                    />
-                  </div>
-                </div>
+                <Input
+                  name="firstName"
+                  label="First name"
+                  autoComplete="given-name"
+                />
 
-                <div>
-                  <label
-                    htmlFor="lastName"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Last name
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      value={queryParams.lastName}
-                      onChange={handleInputChange}
-                      type="text"
-                      id="lastName"
-                      name="lastName"
-                      autoComplete="family-name"
-                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                    />
-                  </div>
+                <Input
+                  name="lastName"
+                  label="Last name"
+                  autoComplete="family-name"
+                />
+
+                <div className="sm:col-span-2">
+                  <Input
+                    name="company"
+                    label="Company"
+                    autoComplete="organization"
+                  />
                 </div>
 
                 <div className="sm:col-span-2">
-                  <label
-                    htmlFor="company"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Company
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      value={queryParams.company}
-                      onChange={handleInputChange}
-                      type="text"
-                      name="company"
-                      id="company"
-                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                    />
-                  </div>
+                  <Input
+                    name="lineOne"
+                    label="Address"
+                    autoComplete="street-address"
+                  />
                 </div>
 
                 <div className="sm:col-span-2">
-                  <label
-                    htmlFor="lineOne"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Address
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      value={queryParams.lineOne}
-                      onChange={handleInputChange}
-                      type="text"
-                      name="lineOne"
-                      id="lineOne"
-                      autoComplete="street-address"
-                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                    />
-                  </div>
+                  <Input
+                    name="lineTwo"
+                    label="Apartment, suite, etc."
+                    autoComplete="address-line2"
+                  />
                 </div>
+
+                <Input name="city" label="City" autoComplete="address-level2" />
+
+                <Select name="country" label="Country" />
+
+                <Input
+                  name="region"
+                  label="State / Province"
+                  autoComplete="address-level1"
+                />
+
+                <Input
+                  name="postalCode"
+                  label="Postal code"
+                  autoComplete="postal-code"
+                />
 
                 <div className="sm:col-span-2">
-                  <label
-                    htmlFor="lineTwo"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Apartment, suite, etc.
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      value={queryParams.lineTwo}
-                      onChange={handleInputChange}
-                      type="text"
-                      name="lineTwo"
-                      id="lineTow"
-                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="city"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    City
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      value={queryParams.city}
-                      onChange={handleInputChange}
-                      type="text"
-                      name="city"
-                      id="city"
-                      autoComplete="address-level2"
-                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="country"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Country
-                  </label>
-                  <div className="mt-1">
-                    <select
-                      value={queryParams.country}
-                      onChange={handleInputChange}
-                      id="country"
-                      name="country"
-                      autoComplete="country-name"
-                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                    >
-                      <option>United States</option>
-                      <option>Canada</option>
-                      <option>Mexico</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="region"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    State / Province
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      value={queryParams.state}
-                      onChange={handleInputChange}
-                      type="text"
-                      name="region"
-                      id="region"
-                      autoComplete="address-level1"
-                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="postalCode"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Postal code
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      value={queryParams.postalCode}
-                      onChange={handleInputChange}
-                      type="text"
-                      name="postalCode"
-                      id="postalCode"
-                      autoComplete="postal-code"
-                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                    />
-                  </div>
-                </div>
-
-                <div className="sm:col-span-2">
-                  <label
-                    htmlFor="phone"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Phone
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      value={queryParams.phone}
-                      onChange={handleInputChange}
-                      type="text"
-                      name="phone"
-                      id="phone"
-                      autoComplete="tel"
-                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                    />
-                  </div>
+                  <Input
+                    name="phone"
+                    label="Phone"
+                    autoComplete="tel"
+                    type="tel"
+                  />
                 </div>
               </div>
             </div>
@@ -409,20 +228,32 @@ export function Book() {
             </div>
 
             <div className="mt-10 border-t border-gray-200 pt-10">
-              <SignLease />
+              <Suspense
+                fallback={
+                  <div className="flex justify-center items-center py-2">
+                    <div className="w-full flex justify-center items-center rounded-md bg-gray-900 px-8 py-2 text-sm font-medium text-white">
+                      Fetching Lease Status...
+                    </div>
+                  </div>
+                }
+              >
+                <LeaseData listing={listing} />
+              </Suspense>
             </div>
           </div>
 
           {/* Order summary */}
           <div className="mt-10 lg:mt-0">
-            <h2 className="text-lg font-medium text-gray-900">Order summary</h2>
+            <h2 className="text-lg font-medium text-gray-900">
+              Booking summary
+            </h2>
 
             <div>
               <h3 className="sr-only">Items in your cart</h3>
               <ul role="list" className="divide-y divide-gray-200">
-                <ListingSummary />
+                <ListingSummary listing={listing} />
                 <div className="py-2 px-4">
-                  <Dates />
+                  <Dates listing={listing} />
                 </div>
               </ul>
               <dl className="space-y-6 border-t border-gray-200 px-4 py-6 sm:px-6">
@@ -457,21 +288,12 @@ export function Book() {
   );
 }
 
-function SubmitButton() {
-  const status = useFormStatus();
+async function LeaseData({ listing }: { listing: Listing }) {
+  const lease = await getLease(`${listing.id}`, "1");
 
-  //@ts-expect-error is okay
-  const isSubmit = status.action?.name === "bound proxy";
-  // Remix makes this kind of stuff a lot easier!
+  if (lease) {
+    return <h1>Lease Exists</h1>;
+  }
 
-  return (
-    <button
-      disabled={status.pending && isSubmit}
-      aria-disabled={status.pending && isSubmit}
-      type="submit"
-      className="w-full rounded-md border border-transparent bg-gray-900 px-4 py-3 text-base font-medium text-white shadow-sm hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-800 focus:ring-offset-2 focus:ring-offset-gray-50"
-    >
-      {status.pending && isSubmit ? "Submitting..." : "Complete order"}
-    </button>
-  );
+  return <SignLease />;
 }

@@ -104,7 +104,7 @@ export function Listing({ listing }: ListingProps) {
             >
               {/* Colors */}
               <div>
-                <Dates />
+                <Dates listing={listing} />
               </div>
 
               <div className="mt-10 flex">
@@ -130,7 +130,7 @@ export function Listing({ listing }: ListingProps) {
                         <Disclosure.Button className="group relative flex w-full items-center justify-between py-6 text-left">
                           <span
                             className={classNames(
-                              open ? "text-indigo-600" : "text-gray-900",
+                              open ? "text-gray-700" : "text-gray-900",
                               "text-sm font-medium"
                             )}
                           >
@@ -139,12 +139,12 @@ export function Listing({ listing }: ListingProps) {
                           <span className="ml-6 flex items-center">
                             {open ? (
                               <MinusIcon
-                                className="block h-6 w-6 text-indigo-400 group-hover:text-indigo-500"
+                                className="block h-6 w-6 text-gray-900 group-hover:text-gray-800"
                                 aria-hidden="true"
                               />
                             ) : (
                               <PlusIcon
-                                className="block h-6 w-6 text-gray-400 group-hover:text-gray-500"
+                                className="block h-6 w-6 text-gray-900 group-hover:text-gray-800"
                                 aria-hidden="true"
                               />
                             )}
