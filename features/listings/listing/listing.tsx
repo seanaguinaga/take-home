@@ -107,7 +107,10 @@ export function Listing({ listing }: ListingProps) {
               }}
             >
               {/* Colors */}
-              <div>
+              <div className="sm:px-4">
+                <h2 className="text-lg font-medium text-gray-900">
+                  Lease Information
+                </h2>
                 <LeaseDurationSelect listing={listing} />
                 <div className="pb-4">
                   <Dates listing={listing} />

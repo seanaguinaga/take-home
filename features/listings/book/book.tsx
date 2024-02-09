@@ -38,7 +38,6 @@ export async function Book({ listing }: BookProps) {
               <h2 className="text-lg font-medium text-gray-900">
                 Contact information
               </h2>
-
               <div className="mt-4">
                 <Input
                   name="email"
@@ -117,7 +116,6 @@ export async function Book({ listing }: BookProps) {
               </div>
             </div>
 
-            {/* Payment */}
             <div className="mt-10 border-t border-gray-200 pt-10">
               <h2 className="text-lg font-medium text-gray-900">Payment</h2>
 
@@ -228,23 +226,8 @@ export async function Book({ listing }: BookProps) {
                 </div>
               </div>
             </div>
-
-            {/* <div className="mt-10 border-t pt-8 border-gray-200">
-              <Suspense
-                fallback={
-                  <div className="flex justify-center items-center py-2">
-                    <div className="w-full flex justify-center items-center rounded-md bg-gray-900 px-8 py-2 text-sm font-medium text-white">
-                      Fetching Lease Status...
-                    </div>
-                  </div>
-                }
-              >
-                <LeaseData listing={listing} />
-              </Suspense>
-            </div> */}
           </div>
 
-          {/* Order summary */}
           <div className="mt-10 lg:mt-0">
             <h2 className="text-lg font-medium text-gray-900">
               Booking summary
@@ -257,7 +240,7 @@ export async function Book({ listing }: BookProps) {
 
                 <Suspense
                   fallback={
-                    <div className="py-2 px-4">
+                    <div className="sm:px-6">
                       <div className="flex justify-center items-center py-2">
                         <div className="w-full flex justify-center items-center rounded-md bg-gray-900 px-8 py-2 text-sm font-medium text-white">
                           Fetching Lease Status...
@@ -304,7 +287,7 @@ async function LeaseData({ listing }: { listing: Listing }) {
 
   return (
     <>
-      <div className="py-2 px-4">
+      <div className="py-2 sm:px-6">
         <SignLease listing={listing} />
       </div>
     </>
