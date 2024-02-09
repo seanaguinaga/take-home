@@ -2,10 +2,12 @@
 import { Disclosure, Tab } from "@headlessui/react";
 import { StarIcon } from "@heroicons/react/20/solid";
 import { HeartIcon, MinusIcon, PlusIcon } from "@heroicons/react/24/outline";
-import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
-import { Dates } from "../date-picker/date-picker";
+
+import { Dates } from "../dates/dates";
+
+import { LinkWithParams } from "@/ui/link";
 
 const product = {
   id: 1,
@@ -173,12 +175,12 @@ export function Listing() {
               </div>
 
               <div className="mt-10 flex">
-                <Link
+                <LinkWithParams
                   href={`/${product.id}/book`}
                   className="flex max-w-xs flex-1 items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50 sm:w-full"
                 >
                   Book
-                </Link>
+                </LinkWithParams>
 
                 <button
                   type="button"

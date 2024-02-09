@@ -1,91 +1,15 @@
 "use client";
 
-import { RadioGroup } from "@headlessui/react";
-import { CheckCircleIcon, TrashIcon } from "@heroicons/react/20/solid";
-import { useState } from "react";
+import { TrashIcon } from "@heroicons/react/20/solid";
+import { ChangeEvent, useState } from "react";
 
-const currencies = ["CAD", "USD", "AUD", "EUR", "GBP"];
-const navigation = {
-  categories: [
-    {
-      name: "Women",
-      featured: [
-        {
-          name: "New Arrivals",
-          href: "#",
-          imageSrc:
-            "https://tailwindui.com/img/ecommerce-images/mega-menu-category-01.jpg",
-          imageAlt:
-            "Models sitting back to back, wearing Basic Tee in black and bone.",
-        },
-        {
-          name: "Basic Tees",
-          href: "#",
-          imageSrc:
-            "https://tailwindui.com/img/ecommerce-images/mega-menu-category-02.jpg",
-          imageAlt:
-            "Close up of Basic Tee fall bundle with off-white, ochre, olive, and black tees.",
-        },
-        {
-          name: "Accessories",
-          href: "#",
-          imageSrc:
-            "https://tailwindui.com/img/ecommerce-images/mega-menu-category-03.jpg",
-          imageAlt:
-            "Model wearing minimalist watch with black wristband and white watch face.",
-        },
-        {
-          name: "Carry",
-          href: "#",
-          imageSrc:
-            "https://tailwindui.com/img/ecommerce-images/mega-menu-category-04.jpg",
-          imageAlt:
-            "Model opening tan leather long wallet with credit card pockets and cash pouch.",
-        },
-      ],
-    },
-    {
-      name: "Men",
-      featured: [
-        {
-          name: "New Arrivals",
-          href: "#",
-          imageSrc:
-            "https://tailwindui.com/img/ecommerce-images/mega-menu-01-men-category-01.jpg",
-          imageAlt:
-            "Hats and sweaters on wood shelves next to various colors of t-shirts on hangers.",
-        },
-        {
-          name: "Basic Tees",
-          href: "#",
-          imageSrc:
-            "https://tailwindui.com/img/ecommerce-images/mega-menu-01-men-category-02.jpg",
-          imageAlt: "Model wearing light heather gray t-shirt.",
-        },
-        {
-          name: "Accessories",
-          href: "#",
-          imageSrc:
-            "https://tailwindui.com/img/ecommerce-images/mega-menu-01-men-category-03.jpg",
-          imageAlt:
-            "Grey 6-panel baseball hat with black brim, black mountain graphic on front, and light heather gray body.",
-        },
-        {
-          name: "Carry",
-          href: "#",
-          imageSrc:
-            "https://tailwindui.com/img/ecommerce-images/mega-menu-01-men-category-04.jpg",
-          imageAlt:
-            "Model putting folded cash into slim card holder olive leather wallet with hand stitching.",
-        },
-      ],
-    },
-  ],
-  pages: [
-    { name: "Company", href: "#" },
-    { name: "Stores", href: "#" },
-  ],
-};
+import { Dates } from "../dates/dates";
+
+import { Lease } from "./lease/sign-lease";
+
+import { submitBooking } from "@/actions/submit-booking";
+import { useQueryParams } from "@/hooks/use-booking-history";
+
 const products = [
   {
     id: 1,
@@ -115,49 +39,49 @@ const paymentMethods = [
   { id: "paypal", title: "PayPal" },
   { id: "etransfer", title: "eTransfer" },
 ];
-const footerNavigation = {
-  products: [
-    { name: "Bags", href: "#" },
-    { name: "Tees", href: "#" },
-    { name: "Objects", href: "#" },
-    { name: "Home Goods", href: "#" },
-    { name: "Accessories", href: "#" },
-  ],
-  company: [
-    { name: "Who we are", href: "#" },
-    { name: "Sustainability", href: "#" },
-    { name: "Press", href: "#" },
-    { name: "Careers", href: "#" },
-    { name: "Terms & Conditions", href: "#" },
-    { name: "Privacy", href: "#" },
-  ],
-  customerService: [
-    { name: "Contact", href: "#" },
-    { name: "Shipping", href: "#" },
-    { name: "Returns", href: "#" },
-    { name: "Warranty", href: "#" },
-    { name: "Secure Payments", href: "#" },
-    { name: "FAQ", href: "#" },
-    { name: "Find a store", href: "#" },
-  ],
-};
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-export function Book() {
-  const [open, setOpen] = useState(false);
+export function Book({ lease }: { lease?: any }) {
   const [selectedDeliveryMethod, setSelectedDeliveryMethod] = useState(
     deliveryMethods[0]
   );
+
+  const { queryParams, setQueryParams } = useQueryParams({
+    email: "",
+    firstName: "",
+    lastName: "",
+    company: "",
+    lineOne: "",
+    lineTwo: "",
+    city: "",
+    country: "",
+    state: "",
+    postalCode: "",
+    phone: "",
+    deliveryMethod: "",
+    paymentMethod: "",
+  });
+
+  // Function to handle input changes
+  const handleInputChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setQueryParams({ ...queryParams, ...{ [name]: value } });
+  };
 
   return (
     <div className="mx-auto max-w-7xl px-4 pb-12 sm:px-6 lg:px-8">
       <div className="rounded-lg bg-white px-5 py-6 shadow sm:px-6">
         <h1 className="sr-only">Checkout</h1>
 
-        <form className="lg:grid lg:grid-cols-2 lg:gap-x-12 xl:gap-x-16">
+        <form
+          action={submitBooking}
+          className="lg:grid lg:grid-cols-2 lg:gap-x-12 xl:gap-x-16"
+        >
           <div>
             <div>
               <h2 className="text-lg font-medium text-gray-900">
@@ -173,9 +97,11 @@ export function Book() {
                 </label>
                 <div className="mt-1">
                   <input
+                    value={queryParams.email}
+                    onChange={handleInputChange}
                     type="email"
-                    id="email-address"
-                    name="email-address"
+                    id="email"
+                    name="email"
                     autoComplete="email"
                     className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                   />
@@ -191,16 +117,18 @@ export function Book() {
               <div className="mt-4 grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-4">
                 <div>
                   <label
-                    htmlFor="first-name"
+                    htmlFor="firstName"
                     className="block text-sm font-medium text-gray-700"
                   >
                     First name
                   </label>
                   <div className="mt-1">
                     <input
+                      value={queryParams.firstName}
+                      onChange={handleInputChange}
                       type="text"
-                      id="first-name"
-                      name="first-name"
+                      id="firstName"
+                      name="firstName"
                       autoComplete="given-name"
                       className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     />
@@ -209,16 +137,18 @@ export function Book() {
 
                 <div>
                   <label
-                    htmlFor="last-name"
+                    htmlFor="lastName"
                     className="block text-sm font-medium text-gray-700"
                   >
                     Last name
                   </label>
                   <div className="mt-1">
                     <input
+                      value={queryParams.lastName}
+                      onChange={handleInputChange}
                       type="text"
-                      id="last-name"
-                      name="last-name"
+                      id="lastName"
+                      name="lastName"
                       autoComplete="family-name"
                       className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     />
@@ -234,6 +164,8 @@ export function Book() {
                   </label>
                   <div className="mt-1">
                     <input
+                      value={queryParams.company}
+                      onChange={handleInputChange}
                       type="text"
                       name="company"
                       id="company"
@@ -244,16 +176,18 @@ export function Book() {
 
                 <div className="sm:col-span-2">
                   <label
-                    htmlFor="address"
+                    htmlFor="lineOne"
                     className="block text-sm font-medium text-gray-700"
                   >
                     Address
                   </label>
                   <div className="mt-1">
                     <input
+                      value={queryParams.lineOne}
+                      onChange={handleInputChange}
                       type="text"
-                      name="address"
-                      id="address"
+                      name="lineOne"
+                      id="lineOne"
                       autoComplete="street-address"
                       className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     />
@@ -262,16 +196,18 @@ export function Book() {
 
                 <div className="sm:col-span-2">
                   <label
-                    htmlFor="apartment"
+                    htmlFor="lineTwo"
                     className="block text-sm font-medium text-gray-700"
                   >
                     Apartment, suite, etc.
                   </label>
                   <div className="mt-1">
                     <input
+                      value={queryParams.lineTwo}
+                      onChange={handleInputChange}
                       type="text"
-                      name="apartment"
-                      id="apartment"
+                      name="lineTwo"
+                      id="lineTow"
                       className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     />
                   </div>
@@ -286,6 +222,8 @@ export function Book() {
                   </label>
                   <div className="mt-1">
                     <input
+                      value={queryParams.city}
+                      onChange={handleInputChange}
                       type="text"
                       name="city"
                       id="city"
@@ -304,6 +242,8 @@ export function Book() {
                   </label>
                   <div className="mt-1">
                     <select
+                      value={queryParams.country}
+                      onChange={handleInputChange}
                       id="country"
                       name="country"
                       autoComplete="country-name"
@@ -325,6 +265,8 @@ export function Book() {
                   </label>
                   <div className="mt-1">
                     <input
+                      value={queryParams.state}
+                      onChange={handleInputChange}
                       type="text"
                       name="region"
                       id="region"
@@ -336,16 +278,18 @@ export function Book() {
 
                 <div>
                   <label
-                    htmlFor="postal-code"
+                    htmlFor="postalCode"
                     className="block text-sm font-medium text-gray-700"
                   >
                     Postal code
                   </label>
                   <div className="mt-1">
                     <input
+                      value={queryParams.postalCode}
+                      onChange={handleInputChange}
                       type="text"
-                      name="postal-code"
-                      id="postal-code"
+                      name="postalCode"
+                      id="postalCode"
                       autoComplete="postal-code"
                       className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     />
@@ -361,6 +305,8 @@ export function Book() {
                   </label>
                   <div className="mt-1">
                     <input
+                      value={queryParams.phone}
+                      onChange={handleInputChange}
                       type="text"
                       name="phone"
                       id="phone"
@@ -370,76 +316,6 @@ export function Book() {
                   </div>
                 </div>
               </div>
-            </div>
-
-            <div className="mt-10 border-t border-gray-200 pt-10">
-              <RadioGroup
-                value={selectedDeliveryMethod}
-                onChange={setSelectedDeliveryMethod}
-              >
-                <RadioGroup.Label className="text-lg font-medium text-gray-900">
-                  Delivery method
-                </RadioGroup.Label>
-
-                <div className="mt-4 grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-4">
-                  {deliveryMethods.map((deliveryMethod) => (
-                    <RadioGroup.Option
-                      key={deliveryMethod.id}
-                      value={deliveryMethod}
-                      className={({ checked, active }) =>
-                        classNames(
-                          checked ? "border-transparent" : "border-gray-300",
-                          active ? "ring-2 ring-indigo-500" : "",
-                          "relative flex cursor-pointer rounded-lg border bg-white p-4 shadow-sm focus:outline-none"
-                        )
-                      }
-                    >
-                      {({ checked, active }) => (
-                        <>
-                          <span className="flex flex-1">
-                            <span className="flex flex-col">
-                              <RadioGroup.Label
-                                as="span"
-                                className="block text-sm font-medium text-gray-900"
-                              >
-                                {deliveryMethod.title}
-                              </RadioGroup.Label>
-                              <RadioGroup.Description
-                                as="span"
-                                className="mt-1 flex items-center text-sm text-gray-500"
-                              >
-                                {deliveryMethod.turnaround}
-                              </RadioGroup.Description>
-                              <RadioGroup.Description
-                                as="span"
-                                className="mt-6 text-sm font-medium text-gray-900"
-                              >
-                                {deliveryMethod.price}
-                              </RadioGroup.Description>
-                            </span>
-                          </span>
-                          {checked ? (
-                            <CheckCircleIcon
-                              className="h-5 w-5 text-indigo-600"
-                              aria-hidden="true"
-                            />
-                          ) : null}
-                          <span
-                            className={classNames(
-                              active ? "border" : "border-2",
-                              checked
-                                ? "border-indigo-500"
-                                : "border-transparent",
-                              "pointer-events-none absolute -inset-px rounded-lg"
-                            )}
-                            aria-hidden="true"
-                          />
-                        </>
-                      )}
-                    </RadioGroup.Option>
-                  ))}
-                </div>
-              </RadioGroup>
             </div>
 
             {/* Payment */}
@@ -553,6 +429,10 @@ export function Book() {
                 </div>
               </div>
             </div>
+
+            <div className="mt-10 border-t border-gray-200 pt-10">
+              <Lease />
+            </div>
           </div>
 
           {/* Order summary */}
@@ -601,35 +481,12 @@ export function Book() {
                           </button>
                         </div>
                       </div>
-
-                      <div className="flex flex-1 items-end justify-between pt-2">
-                        <p className="mt-1 text-sm font-medium text-gray-900">
-                          {product.price}
-                        </p>
-
-                        <div className="ml-4">
-                          <label htmlFor="quantity" className="sr-only">
-                            Quantity
-                          </label>
-                          <select
-                            id="quantity"
-                            name="quantity"
-                            className="rounded-md border border-gray-300 text-left text-base font-medium text-gray-700 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm"
-                          >
-                            <option value={1}>1</option>
-                            <option value={2}>2</option>
-                            <option value={3}>3</option>
-                            <option value={4}>4</option>
-                            <option value={5}>5</option>
-                            <option value={6}>6</option>
-                            <option value={7}>7</option>
-                            <option value={8}>8</option>
-                          </select>
-                        </div>
-                      </div>
                     </div>
                   </li>
                 ))}
+                <div className="py-2 px-4">
+                  <Dates />
+                </div>
               </ul>
               <dl className="space-y-6 border-t border-gray-200 px-4 py-6 sm:px-6">
                 <div className="flex items-center justify-between">
@@ -655,9 +512,9 @@ export function Book() {
               <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
                 <button
                   type="submit"
-                  className="w-full rounded-md border border-transparent bg-indigo-600 px-4 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
+                  className="w-full rounded-md border border-transparent bg-gray-900 px-4 py-3 text-base font-medium text-white shadow-sm hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-800 focus:ring-offset-2 focus:ring-offset-gray-50"
                 >
-                  Confirm order
+                  Complete order
                 </button>
               </div>
             </div>
