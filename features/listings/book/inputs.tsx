@@ -3,6 +3,8 @@
 import { ChangeEvent, ComponentProps, useState } from "react";
 import { useFormStatus } from "react-dom";
 
+import { Listing } from "../data";
+
 import { useQueryParams } from "@/hooks/use-booking-history";
 
 export function Input({
@@ -17,6 +19,7 @@ export function Input({
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+
     setQueryParams({ ...queryParams, ...{ [name]: value } });
     setValue(value);
   };
@@ -41,7 +44,7 @@ export function Input({
   );
 }
 
-export function Select(
+export function CountrySelect(
   props: ComponentProps<"select"> & { name: string; label: string }
 ) {
   const { queryParams, setQueryParams } =
@@ -72,6 +75,61 @@ export function Select(
           <option>Mexico</option>
         </select>
       </div>
+    </div>
+  );
+}
+
+export function LeaseDurationSelect({
+  listing,
+  ...props
+}: ComponentProps<"select"> & {
+  listing: Listing;
+}) {
+  const { queryParams, setQueryParams } =
+    useQueryParams<Record<string, string>>();
+
+  const handleInputChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+
+    const newEnd = new Date(
+      new Date().setMonth(
+        new Date(queryParams.start || listing.availableDate).getMonth() +
+          Number(value)
+      )
+    );
+
+    setQueryParams({ ...queryParams, ...{ [name]: value }, end: newEnd });
+  };
+
+  return (
+    <div className="py-4">
+      <label
+        htmlFor="leaseDuration"
+        className="block text-sm font-medium text-gray-700"
+      >
+        Lease Duration
+      </label>
+      <select
+        {...props}
+        required
+        id="leaseDuration"
+        name="leaseDuration"
+        className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+        defaultValue={queryParams.leaseDuration || ""}
+        onChange={handleInputChange}
+      >
+        <option disabled value="">
+          Select a duration
+        </option>
+        {listing.pricing.monthlyPricing.map((option) => (
+          <option key={option.months} value={option.months}>
+            {option.name} - ${option.amount / 100}{" "}
+            {option.concessionsApplied.length > 0
+              ? `(${option.concessionsApplied.join(", ")})`
+              : ""}
+          </option>
+        ))}
+      </select>
     </div>
   );
 }

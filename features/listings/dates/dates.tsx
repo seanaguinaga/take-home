@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Datepicker from "tailwind-datepicker-react";
 
 import { Listing } from "../data";
@@ -13,7 +13,6 @@ const startOptions = {
   clearBtn: true,
   clearBtnText: "Clear",
   maxDate: new Date("2030-01-01"),
-
   theme: {
     background: "",
     todayBtn: "",
@@ -58,25 +57,38 @@ export const Dates = ({ listing }: DatesProps) => {
   const { queryParams, setQueryParams } = useQueryParams({
     start: undefined,
     end: undefined,
+    leaseDuration: listing.pricing.minimumStay,
   });
+
+  const selectedStay = useMemo(
+    () => Number(queryParams.leaseDuration || listing.pricing.minimumStay),
+    [queryParams.leaseDuration, listing.pricing.minimumStay]
+  );
+
+  console.log("query", queryParams);
 
   const minimumStartDate = makeDate(listing.availableDate);
 
   const minimumEndDate = makeDate(listing.availableDate);
-  minimumEndDate.setMonth(
-    minimumEndDate.getMonth() + listing.pricing.minimumStay
-  );
+  minimumEndDate.setMonth(minimumEndDate.getMonth() + selectedStay);
 
   const [dateRange, setDateRange] = useState({
     start: queryParams.start ? new Date(queryParams.start) : minimumStartDate,
-    end: new Date(queryParams.end || minimumEndDate),
+    end: queryParams.end ? new Date(queryParams.end) : minimumEndDate,
   });
+
+  useEffect(() => {
+    setDateRange({
+      start: queryParams.start ? new Date(queryParams.start) : minimumStartDate,
+      end: queryParams.end ? new Date(queryParams.end) : minimumEndDate,
+    });
+  }, [queryParams.start, queryParams.end]);
 
   const handleStartChange = (selectedDate: Date) => {
     setDateRange((prev) => {
       // Calculate the minimum end date based on the new start date and minimum stay
       const minEndDate = new Date(selectedDate);
-      minEndDate.setMonth(minEndDate.getMonth() + listing.pricing.minimumStay);
+      minEndDate.setMonth(minEndDate.getMonth() + selectedStay);
 
       // Ensure the end date is at least the minimum stay away from the start date
       const newEndDate = prev.end < minEndDate ? minEndDate : prev.end;
@@ -101,7 +113,7 @@ export const Dates = ({ listing }: DatesProps) => {
       const newEndDate = selectedDate >= prev.start ? selectedDate : prev.end;
 
       let newStartDate = new Date(selectedDate);
-      newStartDate.setMonth(newStartDate.getMonth() - 3);
+      newStartDate.setMonth(newStartDate.getMonth() - selectedStay);
 
       if (newStartDate < minimumStartDate) {
         // Just in case html is changed

@@ -2,9 +2,12 @@
 
 import { useState, useTransition } from "react";
 
+import { Listing } from "../../data";
+import { LeaseDurationSelect } from "../inputs";
+
 import { signLease } from "@/actions/sign-lease";
 
-export function SignLease() {
+export function SignLease({ listing }: { listing: Listing }) {
   // 50/50 chance a lease already exists
 
   const [transition, startTransition] = useTransition();
@@ -29,6 +32,7 @@ export function SignLease() {
   ) : (
     <>
       <div>
+        <LeaseDurationSelect listing={listing} />
         <label
           htmlFor="signature"
           className="block text-sm font-medium text-gray-700"

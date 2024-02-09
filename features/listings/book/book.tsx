@@ -4,7 +4,12 @@ import { Listing } from "../data";
 import { Dates } from "../dates/dates";
 
 import { ListingSummary } from "./booking-summary";
-import { Input, Select, SubmitButton } from "./inputs";
+import {
+  CountrySelect,
+  Input,
+  LeaseDurationSelect,
+  SubmitButton,
+} from "./inputs";
 import { getLease } from "./lease/data";
 import { SignLease } from "./lease/sign-lease";
 
@@ -90,7 +95,7 @@ export async function Book({ listing }: BookProps) {
 
                 <Input name="city" label="City" autoComplete="address-level2" />
 
-                <Select name="country" label="Country" />
+                <CountrySelect name="country" label="Country" />
 
                 <Input
                   name="region"
@@ -256,6 +261,7 @@ export async function Book({ listing }: BookProps) {
                   <Dates listing={listing} />
                 </div>
               </ul>
+              <LeaseDurationSelect listing={listing} />
               <dl className="space-y-6 border-t border-gray-200 px-4 py-6 sm:px-6">
                 <div className="flex items-center justify-between">
                   <dt className="text-sm">Subtotal</dt>
@@ -303,5 +309,5 @@ async function LeaseData({ listing }: { listing: Listing }) {
     );
   }
 
-  return <SignLease />;
+  return <SignLease listing={listing} />;
 }
