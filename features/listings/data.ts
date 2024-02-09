@@ -1589,3 +1589,10 @@ export async function getListings() {
     setTimeout(() => resolve(data), delay);
   }) as Promise<typeof data>;
 }
+
+export async function getListing(id: number) {
+  return new Promise((resolve) => {
+    const delay = Math.random() * (2000 - 500) + 500; // Random delay between 500ms and 2000ms
+    setTimeout(() => resolve(data.find((listing) => listing.id === id)), delay);
+  }) as Promise<Listing | undefined>;
+}

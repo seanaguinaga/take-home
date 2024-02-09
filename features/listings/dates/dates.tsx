@@ -49,8 +49,6 @@ export const Dates = () => {
     end: endOptions.minDate,
   });
 
-  console.log(queryParams);
-
   const [dateRange, setDateRange] = useState({
     start: new Date(queryParams.start || startOptions.minDate),
     end: new Date(queryParams.end || endOptions.minDate),

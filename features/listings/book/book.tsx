@@ -1,11 +1,12 @@
 "use client";
 
-import { TrashIcon } from "@heroicons/react/20/solid";
-import { ChangeEvent, useState } from "react";
+import { useParams } from "next/navigation";
+import { ChangeEvent } from "react";
 
 import { Dates } from "../dates/dates";
 
-import { Lease } from "./lease/sign-lease";
+import { ListingSummary } from "./booking-summary";
+import { SignLease } from "./lease/sign-lease";
 
 import { submitBooking } from "@/actions/submit-booking";
 import { useQueryParams } from "@/hooks/use-booking-history";
@@ -44,10 +45,8 @@ function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-export function Book({ lease }: { lease?: any }) {
-  const [selectedDeliveryMethod, setSelectedDeliveryMethod] = useState(
-    deliveryMethods[0]
-  );
+export function Book() {
+  const params = useParams<{ id: string }>();
 
   const { queryParams, setQueryParams } = useQueryParams({
     email: "",
@@ -73,13 +72,15 @@ export function Book({ lease }: { lease?: any }) {
     setQueryParams({ ...queryParams, ...{ [name]: value } });
   };
 
+  const submitBookingWithId = submitBooking.bind(null, params.id);
+
   return (
     <div className="mx-auto max-w-7xl px-4 pb-12 sm:px-6 lg:px-8">
       <div className="rounded-lg bg-white px-5 py-6 shadow sm:px-6">
         <h1 className="sr-only">Checkout</h1>
 
         <form
-          action={submitBooking}
+          action={submitBookingWithId}
           className="lg:grid lg:grid-cols-2 lg:gap-x-12 xl:gap-x-16"
         >
           <div>
@@ -431,7 +432,7 @@ export function Book({ lease }: { lease?: any }) {
             </div>
 
             <div className="mt-10 border-t border-gray-200 pt-10">
-              <Lease />
+              <SignLease />
             </div>
           </div>
 
@@ -442,48 +443,7 @@ export function Book({ lease }: { lease?: any }) {
             <div>
               <h3 className="sr-only">Items in your cart</h3>
               <ul role="list" className="divide-y divide-gray-200">
-                {products.map((product) => (
-                  <li key={product.id} className="flex px-4 py-6 sm:px-6">
-                    <div className="flex-shrink-0">
-                      <img
-                        src={product.imageSrc}
-                        alt={product.imageAlt}
-                        className="w-20 rounded-md"
-                      />
-                    </div>
-
-                    <div className="ml-6 flex flex-1 flex-col">
-                      <div className="flex">
-                        <div className="min-w-0 flex-1">
-                          <h4 className="text-sm">
-                            <a
-                              href={product.href}
-                              className="font-medium text-gray-700 hover:text-gray-800"
-                            >
-                              {product.title}
-                            </a>
-                          </h4>
-                          <p className="mt-1 text-sm text-gray-500">
-                            {product.color}
-                          </p>
-                          <p className="mt-1 text-sm text-gray-500">
-                            {product.size}
-                          </p>
-                        </div>
-
-                        <div className="ml-4 flow-root flex-shrink-0">
-                          <button
-                            type="button"
-                            className="-m-2.5 flex items-center justify-center bg-white p-2.5 text-gray-400 hover:text-gray-500"
-                          >
-                            <span className="sr-only">Remove</span>
-                            <TrashIcon className="h-5 w-5" aria-hidden="true" />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </li>
-                ))}
+                <ListingSummary />
                 <div className="py-2 px-4">
                   <Dates />
                 </div>
@@ -509,7 +469,7 @@ export function Book({ lease }: { lease?: any }) {
                 </div>
               </dl>
 
-              <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
+              <div className="border-t border-gray-200 py-6 sm:px-6">
                 <button
                   type="submit"
                   className="w-full rounded-md border border-transparent bg-gray-900 px-4 py-3 text-base font-medium text-white shadow-sm hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-800 focus:ring-offset-2 focus:ring-offset-gray-50"

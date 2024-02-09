@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 
 import { signLease } from "@/actions/sign-lease";
 
-export function Lease() {
+export function SignLease() {
   const [transition, startTransition] = useTransition();
 
   const [data, setData] = useState<{ id: string }>();
