@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 
 import { Listing } from "../../data";
+import { Dates } from "../../dates/dates";
 import { LeaseDurationSelect } from "../inputs";
 
 import { signLease } from "@/actions/sign-lease";
@@ -33,6 +34,9 @@ export function SignLease({ listing }: { listing: Listing }) {
     <>
       <div>
         <LeaseDurationSelect listing={listing} />
+        <div className="pb-4">
+          <Dates listing={listing} />
+        </div>
         <label
           htmlFor="signature"
           className="block text-sm font-medium text-gray-700"

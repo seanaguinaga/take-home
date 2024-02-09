@@ -1,15 +1,12 @@
 import { Suspense } from "react";
 
 import { Listing } from "../data";
-import { Dates } from "../dates/dates";
+import { Duration } from "../duration/duration";
+import { TotalPrice } from "../price/total";
+import { UnitPrice } from "../price/unit";
 
 import { ListingSummary } from "./booking-summary";
-import {
-  CountrySelect,
-  Input,
-  LeaseDurationSelect,
-  SubmitButton,
-} from "./inputs";
+import { CountrySelect, Input, SubmitButton } from "./inputs";
 import { getLease } from "./lease/data";
 import { SignLease } from "./lease/sign-lease";
 
@@ -232,7 +229,7 @@ export async function Book({ listing }: BookProps) {
               </div>
             </div>
 
-            <div className="mt-10 border-t border-gray-200 pt-10">
+            {/* <div className="mt-10 border-t pt-8 border-gray-200">
               <Suspense
                 fallback={
                   <div className="flex justify-center items-center py-2">
@@ -244,7 +241,7 @@ export async function Book({ listing }: BookProps) {
               >
                 <LeaseData listing={listing} />
               </Suspense>
-            </div>
+            </div> */}
           </div>
 
           {/* Order summary */}
@@ -257,30 +254,26 @@ export async function Book({ listing }: BookProps) {
               <h3 className="sr-only">Items in your cart</h3>
               <ul role="list" className="divide-y divide-gray-200">
                 <ListingSummary listing={listing} />
-                <div className="py-2 px-4">
-                  <Dates listing={listing} />
-                </div>
+
+                <Suspense
+                  fallback={
+                    <div className="py-2 px-4">
+                      <div className="flex justify-center items-center py-2">
+                        <div className="w-full flex justify-center items-center rounded-md bg-gray-900 px-8 py-2 text-sm font-medium text-white">
+                          Fetching Lease Status...
+                        </div>
+                      </div>
+                    </div>
+                  }
+                >
+                  <LeaseData listing={listing} />
+                </Suspense>
               </ul>
-              <LeaseDurationSelect listing={listing} />
+
               <dl className="space-y-6 border-t border-gray-200 px-4 py-6 sm:px-6">
-                <div className="flex items-center justify-between">
-                  <dt className="text-sm">Subtotal</dt>
-                  <dd className="text-sm font-medium text-gray-900">$64.00</dd>
-                </div>
-                <div className="flex items-center justify-between">
-                  <dt className="text-sm">Shipping</dt>
-                  <dd className="text-sm font-medium text-gray-900">$5.00</dd>
-                </div>
-                <div className="flex items-center justify-between">
-                  <dt className="text-sm">Taxes</dt>
-                  <dd className="text-sm font-medium text-gray-900">$5.52</dd>
-                </div>
-                <div className="flex items-center justify-between border-t border-gray-200 pt-6">
-                  <dt className="text-base font-medium">Total</dt>
-                  <dd className="text-base font-medium text-gray-900">
-                    $75.52
-                  </dd>
-                </div>
+                <Duration />
+                <UnitPrice listing={listing} />
+                <TotalPrice listing={listing} />
               </dl>
 
               <div className="border-t border-gray-200 py-6 sm:px-6">
@@ -300,14 +293,20 @@ async function LeaseData({ listing }: { listing: Listing }) {
 
   if (lease) {
     return (
-      <div className="flex justify-center items-center py-2">
+      <div className="flex justify-center items-center py-2 sm:px-4">
         <div className="w-full flex justify-center items-center rounded-md bg-gray-900 px-8 py-2 text-sm font-medium text-white">
           Lease Signed
+          <input type="hidden" name="leaseId" value={lease.id} />
         </div>
-        <input type="hidden" name="leaseId" value={lease.id} />
       </div>
     );
   }
 
-  return <SignLease listing={listing} />;
+  return (
+    <>
+      <div className="py-2 px-4">
+        <SignLease listing={listing} />
+      </div>
+    </>
+  );
 }

@@ -3,8 +3,12 @@ import { Disclosure, Tab } from "@headlessui/react";
 import { MinusIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { usePathname, useRouter } from "next/navigation";
 
+import { LeaseDurationSelect } from "../book/inputs";
 import type { Listing as IListing } from "../data";
 import { Dates } from "../dates/dates";
+import { Duration } from "../duration/duration";
+import { TotalPrice } from "../price/total";
+import { UnitPrice } from "../price/unit";
 
 import { LinkWithParams } from "@/ui/link";
 
@@ -73,7 +77,7 @@ export function Listing({ listing }: ListingProps) {
           </Tab.Group>
 
           {/* Product info */}
-          <div className="mt-10 px-4 sm:mt-16 sm:px-0 lg:mt-0">
+          <div className="mt-10 sm:mt-16 sm:px-0 lg:mt-0">
             <h1 className="text-3xl font-bold tracking-tight text-gray-900">
               {listing.marketingName}
             </h1>
@@ -104,13 +108,21 @@ export function Listing({ listing }: ListingProps) {
             >
               {/* Colors */}
               <div>
-                <Dates listing={listing} />
+                <LeaseDurationSelect listing={listing} />
+                <div className="pb-4">
+                  <Dates listing={listing} />
+                </div>
+                <dl className="space-y-6 border-t border-gray-200 px-4 py-6 sm:px-6">
+                  <Duration />
+                  <UnitPrice listing={listing} />
+                  <TotalPrice listing={listing} />
+                </dl>
               </div>
 
               <div className="mt-10 flex">
                 <LinkWithParams
                   href={`/${listing.id}/book`}
-                  className="flex max-w-xs flex-1 items-center justify-center rounded-md border border-transparent bg-gray-900 px-8 py-3 text-base font-medium text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-800 focus:ring-offset-2 focus:ring-offset-gray-50 sm:w-full"
+                  className="flex w-full flex-1 items-center justify-center rounded-md border border-transparent bg-gray-900 px-8 py-3 text-base font-medium text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-800 focus:ring-offset-2 focus:ring-offset-gray-50 sm:w-full"
                 >
                   Book
                 </LinkWithParams>
