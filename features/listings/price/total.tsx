@@ -6,7 +6,7 @@ import { Listing } from "../data";
 
 import { formatCurrency } from "./utils";
 
-import { useQueryParams } from "@/hooks/use-booking-history";
+import { useQueryParams } from "@/hooks/use-query-params";
 
 function calculateTotal(listing: Listing, leaseDuration: number): number {
   const amount = listing.pricing.monthlyPricing.find(

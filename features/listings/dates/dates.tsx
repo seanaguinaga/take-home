@@ -5,7 +5,7 @@ import Datepicker from "tailwind-datepicker-react";
 
 import { Listing } from "../data";
 
-import { useQueryParams } from "@/hooks/use-booking-history";
+import { useQueryParams } from "@/hooks/use-query-params";
 
 const startOptions = {
   autoHide: true,
@@ -45,19 +45,16 @@ interface DatesProps {
   listing: Listing;
 }
 
-function makeDate(date: string) {
-  // Going down the UTC rabbit hole seems out of scope for a takehome? I'll stop here.
+function makeDate(date: string): Date {
   const [year, month, day] = date.split("-").map((num) => parseInt(num, 10));
   return new Date(year, month - 1, day);
 }
 
-export const Dates = ({ listing }: DatesProps) => {
-  const [showStart, setShowStart] = useState(false);
-  const [showEnd, setShowEnd] = useState(false);
+export const useDateRange = (listing: Listing) => {
   const { queryParams, setQueryParams } = useQueryParams({
     start: undefined,
     end: undefined,
-    leaseDuration: listing.pricing.minimumStay,
+    leaseDuration: undefined,
   });
 
   const selectedStay = useMemo(
@@ -65,12 +62,12 @@ export const Dates = ({ listing }: DatesProps) => {
     [queryParams.leaseDuration, listing.pricing.minimumStay]
   );
 
-  console.log("query", queryParams);
-
   const minimumStartDate = makeDate(listing.availableDate);
-
-  const minimumEndDate = makeDate(listing.availableDate);
-  minimumEndDate.setMonth(minimumEndDate.getMonth() + selectedStay);
+  const minimumEndDate = useMemo(() => {
+    const date = makeDate(listing.availableDate);
+    date.setMonth(date.getMonth() + selectedStay);
+    return date;
+  }, [listing.availableDate, selectedStay]);
 
   const [dateRange, setDateRange] = useState({
     start: queryParams.start ? new Date(queryParams.start) : minimumStartDate,
@@ -82,7 +79,32 @@ export const Dates = ({ listing }: DatesProps) => {
       start: queryParams.start ? new Date(queryParams.start) : minimumStartDate,
       end: queryParams.end ? new Date(queryParams.end) : minimumEndDate,
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [queryParams.start, queryParams.end]);
+
+  return {
+    dateRange,
+    selectedStay,
+    setDateRange,
+    queryParams,
+    setQueryParams,
+    minimumStartDate,
+    minimumEndDate,
+  };
+};
+
+export const Dates = ({ listing }: DatesProps) => {
+  const {
+    dateRange,
+    queryParams,
+    setDateRange,
+    setQueryParams,
+    selectedStay,
+    minimumStartDate,
+    minimumEndDate,
+  } = useDateRange(listing);
+  const [showStart, setShowStart] = useState(false);
+  const [showEnd, setShowEnd] = useState(false);
 
   const handleStartChange = (selectedDate: Date) => {
     setDateRange((prev) => {

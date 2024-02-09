@@ -7,6 +7,7 @@ import { LeaseDurationSelect } from "../book/inputs";
 import type { Listing as IListing } from "../data";
 import { Dates } from "../dates/dates";
 import { Duration } from "../duration/duration";
+import { Concessions } from "../price/concessions";
 import { TotalPrice } from "../price/total";
 import { UnitPrice } from "../price/unit";
 
@@ -27,11 +28,8 @@ export function Listing({ listing }: ListingProps) {
   return (
     <div className="mx-auto max-w-7xl px-4 pb-12 sm:px-6 lg:px-8">
       <div className="rounded-lg bg-white px-5 py-6 shadow sm:px-6">
-        {/* Product */}
         <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-8">
-          {/* Image gallery */}
           <Tab.Group as="div" className="flex flex-col-reverse">
-            {/* Image selector */}
             <div className="mx-auto mt-6 hidden w-full max-w-2xl sm:block lg:max-w-none">
               <Tab.List className="grid grid-cols-4 gap-6">
                 {listing.images.map((image) => (
@@ -118,6 +116,7 @@ export function Listing({ listing }: ListingProps) {
                 <dl className="space-y-6 border-t border-gray-200 px-4 py-6 sm:px-6">
                   <Duration />
                   <UnitPrice listing={listing} />
+                  <Concessions listing={listing} />
                   <TotalPrice listing={listing} />
                 </dl>
               </div>

@@ -4,7 +4,7 @@ import { Listing } from "../data";
 
 import { formatCurrency } from "./utils";
 
-import { useQueryParams } from "@/hooks/use-booking-history";
+import { useQueryParams } from "@/hooks/use-query-params";
 
 function getUnitPrice(listing: Listing, leaseDuration: number): number {
   const amount = listing.pricing.monthlyPricing.find(
@@ -28,9 +28,7 @@ export function UnitPrice({ listing }: { listing: Listing }) {
     <div className="flex items-center justify-between">
       <dt className="text-sm">Price per month</dt>
       <dd className="text-sm font-medium text-gray-900">
-        {isValidDuration
-          ? formattedUnitPrice
-          : "Choose the length of your stay"}
+        {isValidDuration ? formattedUnitPrice : ""}
       </dd>
     </div>
   );

@@ -10,6 +10,8 @@ import { signLease } from "@/actions/sign-lease";
 
 export function SignLease({ listing }: { listing: Listing }) {
   // 50/50 chance a lease already exists
+  // My thought process is that maybe a lease can be applied to a stay within a certain range
+  // so reduce friction for the user by fetching an existing lease if there is still a valid one?
 
   const [transition, startTransition] = useTransition();
 

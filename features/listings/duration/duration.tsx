@@ -1,6 +1,6 @@
 "use client";
 
-import { useQueryParams } from "@/hooks/use-booking-history";
+import { useQueryParams } from "@/hooks/use-query-params";
 
 export function Duration() {
   const { queryParams } = useQueryParams<Record<string, string>>();
@@ -9,7 +9,7 @@ export function Duration() {
     <div className="flex items-center justify-between">
       <dt className="text-sm">Months</dt>
       <dd className="text-sm font-medium text-gray-900">
-        {queryParams.leaseDuration || "Choose the length of your stay"}
+        {queryParams.leaseDuration || ""}
       </dd>
     </div>
   );

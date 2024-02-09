@@ -2,6 +2,21 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
+Sean:
+
+I swapped to App Router
+There is some cool patterns it has access to that pages router does not and I wanted to practice
+There are some rough edges not present in remix but it still works
+I highly recommend you watch this video:
+https://www.youtube.com/watch?v=9CN9RCzznZc
+
+I am honestly not sure how to test this style of app since it runs on the server
+
+I went very very light on undefined/null-checking
+
+Error handling is kind of proprietary in the next space so I was going to ask you how you'd want those handled
+Showing Error Boundaries and things like that are my preferred way
+
 First, run the development server:
 
 ```bash

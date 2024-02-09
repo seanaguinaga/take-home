@@ -5,7 +5,7 @@ import { useFormStatus } from "react-dom";
 
 import { Listing } from "../data";
 
-import { useQueryParams } from "@/hooks/use-booking-history";
+import { useQueryParams } from "@/hooks/use-query-params";
 
 export function Input({
   name,
