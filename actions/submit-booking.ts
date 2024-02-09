@@ -7,8 +7,7 @@ export async function submitBooking(bookingId: string, formData: FormData) {
 
   console.log(values);
 
-  // mutate data
-  // revalidate cache
+  // check to see if the booking can be made
 
   await new Promise((resolve) => setTimeout(resolve, 3000));
 

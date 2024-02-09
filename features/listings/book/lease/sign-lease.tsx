@@ -5,6 +5,8 @@ import { useState, useTransition } from "react";
 import { signLease } from "@/actions/sign-lease";
 
 export function SignLease() {
+  // 50/50 chance a lease already exists
+
   const [transition, startTransition] = useTransition();
 
   const [data, setData] = useState<{ id: string }>();

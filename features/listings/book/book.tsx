@@ -289,10 +289,18 @@ export async function Book({ listing }: BookProps) {
 }
 
 async function LeaseData({ listing }: { listing: Listing }) {
-  const lease = await getLease(`${listing.id}`, "1");
+  const lease = await getLease(`${listing.id}`, "1", listing.availableDate);
+  // 50/50 chance a lease already exists
 
   if (lease) {
-    return <h1>Lease Exists</h1>;
+    return (
+      <div className="flex justify-center items-center py-2">
+        <div className="w-full flex justify-center items-center rounded-md bg-gray-900 px-8 py-2 text-sm font-medium text-white">
+          Lease Signed
+        </div>
+        <input type="hidden" name="leaseId" value={lease.id} />
+      </div>
+    );
   }
 
   return <SignLease />;

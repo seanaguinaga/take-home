@@ -13,7 +13,7 @@ const startOptions = {
   clearBtn: true,
   clearBtnText: "Clear",
   maxDate: new Date("2030-01-01"),
-  minDate: new Date(),
+
   theme: {
     background: "",
     todayBtn: "",
@@ -40,11 +40,16 @@ const endOptions = {
   ...startOptions,
   inputNameProp: "end",
   inputIdProp: "end",
-  minDate: new Date(new Date().setDate(new Date().getDate() + 1)),
 } as const;
 
 interface DatesProps {
   listing: Listing;
+}
+
+function makeDate(date: string) {
+  // Going down the UTC rabbit hole seems out of scope for a takehome? I'll stop here.
+  const [year, month, day] = date.split("-").map((num) => parseInt(num, 10));
+  return new Date(year, month - 1, day);
 }
 
 export const Dates = ({ listing }: DatesProps) => {
@@ -55,26 +60,30 @@ export const Dates = ({ listing }: DatesProps) => {
     end: undefined,
   });
 
+  const minimumStartDate = makeDate(listing.availableDate);
+
+  const minimumEndDate = makeDate(listing.availableDate);
+  minimumEndDate.setMonth(
+    minimumEndDate.getMonth() + listing.pricing.minimumStay
+  );
+
   const [dateRange, setDateRange] = useState({
-    start: new Date(
-      queryParams.start || listing.availableDate || startOptions.minDate
-    ),
-    end: new Date(
-      queryParams.end ||
-        new Date().setDate(new Date(listing.availableDate).getDate() + 1) ||
-        endOptions.minDate
-    ),
+    start: queryParams.start ? new Date(queryParams.start) : minimumStartDate,
+    end: new Date(queryParams.end || minimumEndDate),
   });
 
   const handleStartChange = (selectedDate: Date) => {
     setDateRange((prev) => {
+      // Calculate the minimum end date based on the new start date and minimum stay
+      const minEndDate = new Date(selectedDate);
+      minEndDate.setMonth(minEndDate.getMonth() + listing.pricing.minimumStay);
+
+      // Ensure the end date is at least the minimum stay away from the start date
+      const newEndDate = prev.end < minEndDate ? minEndDate : prev.end;
+
       const newDateRange = {
-        ...prev,
-        end:
-          selectedDate > prev.end
-            ? new Date(new Date().setDate(selectedDate.getDate() + 1))
-            : prev.end,
         start: selectedDate,
+        end: newEndDate,
       };
 
       setQueryParams({
@@ -85,16 +94,24 @@ export const Dates = ({ listing }: DatesProps) => {
       return newDateRange;
     });
   };
+
   const handleEndChange = (selectedDate: Date) => {
     setDateRange((prev) => {
-      const isValidEndDate = selectedDate >= startOptions.minDate;
-      const endDate = isValidEndDate ? selectedDate : prev.end;
-      const startDate =
-        endDate < prev.start
-          ? new Date(new Date().setDate(endDate.getDate() - 1))
-          : prev.start;
+      // Ensure the selected end date is not before the start date
+      const newEndDate = selectedDate >= prev.start ? selectedDate : prev.end;
 
-      const newDateRange = { start: startDate, end: endDate };
+      let newStartDate = new Date(selectedDate);
+      newStartDate.setMonth(newStartDate.getMonth() - 3);
+
+      if (newStartDate < minimumStartDate) {
+        // Just in case html is changed
+        newStartDate = minimumStartDate;
+      }
+
+      const newDateRange = {
+        start: newStartDate,
+        end: newEndDate,
+      };
 
       setQueryParams({
         ...queryParams,
@@ -112,7 +129,10 @@ export const Dates = ({ listing }: DatesProps) => {
     <div className="flex items-center justify-between">
       <div className="relative w-full">
         <Datepicker
-          options={startOptions}
+          options={{
+            ...startOptions,
+            minDate: minimumStartDate,
+          }}
           onChange={handleStartChange}
           show={showStart}
           setShow={handleStartClose}
@@ -131,7 +151,10 @@ export const Dates = ({ listing }: DatesProps) => {
           // not sure how to make this not go off the screen in mobile?
         }
         <Datepicker
-          options={endOptions}
+          options={{
+            ...endOptions,
+            minDate: minimumEndDate,
+          }}
           onChange={handleEndChange}
           show={showEnd}
           setShow={handleEndClose}
