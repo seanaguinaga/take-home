@@ -293,7 +293,7 @@ async function LeaseData({ listing }: { listing: Listing }) {
 
   if (lease) {
     return (
-      <div className="flex justify-center items-center py-2 sm:px-4">
+      <div className="flex justify-center items-center py-2 sm:px-6">
         <div className="w-full flex justify-center items-center rounded-md bg-gray-900 px-8 py-2 text-sm font-medium text-white">
           Lease Signed
           <input type="hidden" name="leaseId" value={lease.id} />
